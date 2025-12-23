@@ -11,57 +11,58 @@
 
   <header class="navbar">
     <nav>
-      <ul>
-        <li>Home</li>
-        <li>Case Studies</li>
-        <li>Testimonials</li>
-        <li>Recent work</li>
-        <li>Get In Touch</li>
-      </ul>
-      <div class="socials">
-        <span>in</span>
-        <span>Be</span>
-        <span>🐦</span>
+      <div class="container nav-inner">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list" aria-label="Toggle navigation">
+          <span class="hamburger" aria-hidden="true"></span>
+        </button>
+
+        <ul id="nav-list" class="nav-list">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#case-studies">Case Studies</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+          <li><a href="#recent-work">Recent work</a></li>
+          <li><a href="#contact">Get In Touch</a></li>
+        </ul>
+
+        <div class="socials" aria-hidden="false">
+          <span>in</span>
+          <span>Be</span>
+          <span>🐦</span>
+        </div>
       </div>
     </nav>
   </header>
 
-  <!-- HERO -->
+ 
   <section class="hero">
-    <div class="hero-left">
-      <h1 class="name">Irmuun</h1>
+    <div class="container hero-inner">
+      <div class="hero-left">
+        <h1 class="name">Irmuun</h1>
 
-      <p class="intro">
-        Hi, I'm Irmuun – a frontend & mobile developer.<br><br>
-        I build modern web apps using Next.js, React, HTML, CSS,
-        and deploy with Vercel.<br><br>
-        I also develop cross-platform mobile apps using Flutter & Dart,
-        with code managed on GitHub.
-      </p>
+        <p class="intro">
+          Hi, I'm Irmuun – a frontend & mobile developer.<br><br>
+          I build modern web apps using Next.js, React, HTML, CSS,
+          and deploy with Vercel.<br><br>
+          I also develop cross-platform mobile apps using Flutter & Dart,
+          with code managed on GitHub.
+        </p>
 
-      <button class="cta">
-        Let’s get started →
-      </button>
-    </div>
+        <button class="cta">
+          Let’s get started →
+        </button>
+      </div>
 
-    <div class="hero-right">
-      <div class="avatar">
-<<<<<<< Updated upstream
-    
-=======
-        <!-- Place a JPG at img/profile.jpg to replace the initials avatar -->
->>>>>>> Stashed changes
-        <img src="img/profile.jpg" alt="Irmuun" />
-        <div class="profile-avatar">IM</div>
+      <div class="hero-right">
+        <div class="avatar">
+
+          <img src="img/profile.jpg" alt="Irmuun" />
+          <div class="profile-avatar">IM</div>
+        </div>
       </div>
     </div>
   </section>
 
-<<<<<<< Updated upstream
 
-=======
-  <!-- SKILLS -->
->>>>>>> Stashed changes
   <section class="skills">
     <h3>Skills</h3>
     <div class="skill-list">
@@ -73,6 +74,36 @@
     </div>
   </section>
 
+
+  <section id="portfolio" class="portfolio">
+    <h3>Selected Projects</h3>
+
+    <div class="portfolio-controls">
+      <div class="filters" role="tablist" aria-label="Project filters">
+        <button class="filter" data-filter="all" aria-pressed="true">All</button>
+      </div>
+
+      <div class="portfolio-search">
+        <input type="search" id="project-search" placeholder="Search projects..." aria-label="Search projects" />
+      </div>
+    </div>
+
+    <div class="projects-grid" id="projects-grid" aria-live="polite">
+      <p class="muted">Loading projects…</p>
+    </div>
+  </section>
+
+ 
+  <div id="project-modal" class="project-modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" aria-label="Close project details">×</button>
+      <h4 id="modal-title"></h4>
+      <img id="modal-image" alt="" />
+      <p id="modal-desc"></p>
+      <a id="modal-link" class="project-cta" target="_blank" rel="noopener">View project</a>
+    </div>
+  </div>
+
   <script>
     (function(){
       const imgPath = 'img/profile.jpg';
@@ -82,6 +113,195 @@
       tester.onload = function(){ imgEl.style.display='block'; fallback.style.display='none'; };
       tester.onerror = function(){ imgEl.style.display='none'; fallback.style.display='flex'; };
       tester.src = imgPath;
+    })();
+  </script>
+
+  <script>
+    (function(){
+      const nav = document.querySelector('nav');
+      const toggle = document.querySelector('.nav-toggle');
+      const navList = document.getElementById('nav-list');
+
+      if (toggle) {
+        toggle.addEventListener('click', function(){
+          const expanded = this.getAttribute('aria-expanded') === 'true';
+          this.setAttribute('aria-expanded', String(!expanded));
+          nav.classList.toggle('nav-open');
+        });
+
+        navList?.addEventListener('click', function(e){
+          if (e.target.tagName === 'A') {
+            toggle.setAttribute('aria-expanded', 'false');
+            nav.classList.remove('nav-open');
+          }
+        });
+
+        document.addEventListener('keydown', function(e){
+          if (e.key === 'Escape') {
+            toggle.setAttribute('aria-expanded', 'false');
+            nav.classList.remove('nav-open');
+          }
+        });
+      }
+    })();
+  </script>
+
+  <script>
+    (function(){
+      async function fetchProjects(){
+        try {
+          const res = await fetch('projects.json');
+          if (!res.ok) throw new Error('Network response was not ok');
+          return await res.json();
+        } catch (err) {
+          console.warn('Failed to load projects.json, using fallback', err);
+          return [];
+        }
+      }
+
+      function createCard(p){
+        const el = document.createElement('article');
+        el.className = 'project-card';
+        el.setAttribute('data-category', p.category);
+        el.tabIndex = 0;
+        el.innerHTML = `
+          <div class="project-img-wrap">
+            ${p.image ? `<img src="${p.image}" alt="${p.title}" loading="lazy">` : `<div class="project-img-fallback">${p.title.charAt(0)}</div>`}
+          </div>
+          <div class="project-body">
+            <h4 class="project-title">${p.title}</h4>
+            <p class="project-category">${p.category}</p>
+            <p class="project-desc">${p.description}</p>
+            <div class="project-tags">${(p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+            <div class="project-actions">
+              <button class="btn-details" data-id="${p.id}">Details</button>
+              ${p.link ? `<a class="project-cta" href="${p.link}" target="_blank" rel="noopener">Live</a>` : ''}
+            </div>
+          </div>
+        `;
+        return el;
+      }
+
+      async function renderProjects(){
+        const data = await fetchProjects();
+        const grid = document.getElementById('projects-grid');
+        const filtersWrap = document.querySelector('.filters');
+        const search = document.getElementById('project-search');
+
+        grid.innerHTML = '';
+        if (!data.length) { grid.innerHTML = '<p class="muted">No projects found</p>'; return; }
+
+        const cats = Array.from(new Set(data.map(p=>p.category)));
+        filtersWrap.innerHTML = '<button class="filter" data-filter="all" aria-pressed="true">All</button>' + cats.map(c=>`<button class="filter" data-filter="${c}">${c}</button>`).join('');
+
+        function applyFilters(){
+          const active = document.querySelector('.filter[aria-pressed="true"]')?.dataset?.filter || 'all';
+          const q = (search.value||'').toLowerCase().trim();
+          const filtered = data.filter(p=>{
+            const byCat = active === 'all' || p.category === active;
+            const byQuery = !q || (p.title + ' ' + p.description + ' ' + (p.tags||[]).join(' ')).toLowerCase().includes(q);
+            return byCat && byQuery;
+          });
+          grid.innerHTML = filtered.map(p=>createCard(p).outerHTML).join('');
+          attachCardEvents();
+          setupImages();
+        }
+
+        applyFilters();
+
+        filtersWrap.addEventListener('click', function(e){
+          if (e.target.classList.contains('filter')) {
+            filtersWrap.querySelectorAll('.filter').forEach(b=>b.setAttribute('aria-pressed','false'));
+            e.target.setAttribute('aria-pressed','true');
+            applyFilters();
+          }
+        });
+
+       
+        search.addEventListener('input', debounce(applyFilters, 250));
+
+     
+        window.__projectsCache = data;
+      }
+
+      // keep track of focused element before opening modal
+      let lastFocused = null;
+
+      function attachCardEvents(){
+        document.querySelectorAll('.btn-details').forEach(btn=>{
+          btn.addEventListener('click', function(){
+            const id = this.dataset.id;
+            openModal(id);
+          });
+        });
+
+        // keyboard support: press Enter on card to open details
+        document.querySelectorAll('.project-card').forEach(card=>{
+          card.addEventListener('keydown', function(e){
+            if (e.key === 'Enter') {
+              card.querySelector('.btn-details')?.click();
+            }
+          });
+        });
+      }
+
+      function setupImages(){
+        document.querySelectorAll('.projects-grid .project-img-wrap img').forEach(img=>{
+          const wrap = img.closest('.project-img-wrap');
+          if (img.complete && img.naturalWidth !== 0) {
+            img.classList.add('loaded');
+            wrap?.classList.add('is-loaded');
+          } else {
+            img.addEventListener('load', function(){
+              img.classList.add('loaded');
+              wrap?.classList.add('is-loaded');
+            });
+            img.addEventListener('error', function(){ img.style.display='none'; wrap?.classList.add('is-loaded'); });
+          }
+        });
+      }
+
+      async function openModal(id){
+        const data = window.__projectsCache || await fetchProjects();
+        const p = data.find(x=>x.id === id) || data[0];
+        if (!p) return;
+        const modal = document.getElementById('project-modal');
+        // save last focused element for returning focus
+        lastFocused = document.activeElement;
+        document.getElementById('modal-title').textContent = p.title;
+        const imgEl = document.getElementById('modal-image');
+        if (p.image) { imgEl.src = p.image; imgEl.style.display='block'; } else { imgEl.style.display='none'; }
+        document.getElementById('modal-desc').textContent = p.description;
+        const link = document.getElementById('modal-link');
+        if (p.link) { link.href = p.link; link.style.display='inline-block'; } else { link.style.display='none'; }
+        modal.setAttribute('aria-hidden','false');
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        // focus the close button for keyboard users
+        modal.querySelector('.modal-close')?.focus();
+      }
+
+      function closeModal(){
+        const modal = document.getElementById('project-modal');
+        modal.setAttribute('aria-hidden','true');
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+        if (lastFocused) lastFocused.focus();
+      }
+
+      
+      document.addEventListener('click', function(e){
+        if (e.target.classList.contains('modal-close') || e.target.id === 'project-modal') closeModal();
+      });
+      document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape') closeModal();
+      });
+
+      function debounce(fn, wait=200){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), wait); }; }
+
+   
+      renderProjects();
+
     })();
   </script>
 
