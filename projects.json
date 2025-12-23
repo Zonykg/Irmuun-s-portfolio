@@ -31,7 +31,7 @@
     "title": "Api project no css",
     "category": "Tooling",
     "description": "A project demonstrating API integration without CSS.",
-    "image": "",
+    "image": "img/project4.jpg",
     "tags": ["react",  "Vercel"],
     "link": "https://hicheel1.vercel.app/"
   }
