@@ -1,0 +1,38 @@
+[
+  {
+    "id": "proj-1",
+    "title": "Online shop next web",
+    "category": "Web App",
+    "description": "A productivity app built with React and local persistence.",
+    "image": "img/project1.jpg",
+    "tags": ["Next.js", "tailwind.css", "Vercel"],
+    "link": "https://irmuun1web.vercel.app/"
+  },
+  {
+    "id": "proj-2",
+    "title": "web online Shop",
+    "category": "web app",
+    "description": "Cross-platform shopping web with smooth animations and state management.",
+    "image": "img/project2.jpg",
+    "tags": ["HTML", "CSS", "JavaScript"],
+    "link": "https://zonykg.github.io/premium-online/"
+  },
+  {
+    "id": "proj-3",
+    "title": "Mongoliin Medeelelin Web",
+    "category": "web app",
+    "description": "A responsive web application for Mongolian news and information.",
+    "image": "img/project3.jpg",
+    "tags": ["HTML", "CSS", "JavaScript"],
+    "link": "https://zonykg.github.io/mongoliin-medeelelin-web/"
+  },
+  {
+    "id": "proj-4",
+    "title": "Api project no css",
+    "category": "Tooling",
+    "description": "A project demonstrating API integration without CSS.",
+    "image": "",
+    "tags": ["react",  "Vercel"],
+    "link": "https://hicheel1.vercel.app/"
+  }
+]
