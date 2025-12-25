@@ -96,12 +96,12 @@ nav ul li {
 .hamburger::before { transform: translateY(-7px); }
 .hamburger::after { transform: translateY(7px); }
 
-/* when nav is open: animate into X */
+
 nav.nav-open .hamburger { transform: rotate(45deg); }
 nav.nav-open .hamburger::before { transform: rotate(-90deg) translateX(-1px); opacity: 0; }
 nav.nav-open .hamburger::after { transform: rotate(-90deg) translateX(-1px); opacity: 0; }
 
-/* default nav list */
+
 .nav-list {
   display: flex;
   gap: 30px;
