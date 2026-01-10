@@ -3,24 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Irmuun — front-end developer. Portfolio showcasing web projects, tools and contact information." />
+  <meta name="theme-color" content="#000000">
+  <meta property="og:title" content="Irmuun | Portfolio">
+  <meta property="og:description" content="Irmuun — front-end developer. Portfolio showcasing web projects, tools and contact information.">
+  <meta property="og:image" content="img/profile.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <title>Irmuun | Portfolio</title>
+  <link rel="preload" as="image" href="img/profile.jpg">
+  <link rel="icon" href="img/profile.jpg" type="image/jpeg">
+  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body id="top">
+  <a class="skip-link" href="#portfolio">Skip to projects</a>
 
   <header class="navbar">
     <nav>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list" aria-label="Toggle navigation">
+        <span class="hamburger" aria-hidden="true"></span>
+      </button>
       <ul class="nav-list" id="nav-list">
         <li><a href="index.html#top">Home</a></li>
         <li><a href="about.html">About Me</a></li>
-        <li><a href="#portfolio">Recent work</a></li>
-        <li><a href="mailto:hello@irmuun.dev">Get In Touch</a></li>
+        <li><a href="mailto:klight449@gmail.com">Gmail</a></li>
       </ul>
-      <div class="socials">
-        <span>in</span>
-        <span>Be</span>
-        <span>🐦</span>
-      </div>
     </nav>
   </header>
 
@@ -28,32 +36,43 @@
     <div class="container hero-inner">
       <div class="hero-left">
         <h1 class="name">Irmuun</h1>
-        <p class="intro">Hi, I'm Irmuun – Portfolio welcome.<br><br></p>
+        <p class="intro">Hi, I'm Irmuun — welcome to my portfolio.</p>
         <a href="about.html" class="cta">Let’s get started →</a>
       </div>
       <div class="hero-right">
         <div class="avatar">
           <img src="img/profile.jpg" alt="Irmuun" />
-          <div class="profile-avatar">IM</div>
+          <div class="profile-avatar"></div>
         </div>
       </div>
     </div>
   </section>
 
   <section id="portfolio" class="portfolio">
-    <h3>Selected Projects</h3>
+    <h2>Selected Projects</h2>
     <div class="portfolio-controls">
       <div class="filters" role="tablist" aria-label="Project filters">
         <button class="filter" data-filter="all" aria-pressed="true">All</button>
+        <noscript>
+          <div class="filters-noscript">
+            <a href="#portfolio" class="filter-link">All</a>
+            <a href="#portfolio" class="filter-link">Web App</a>
+            <a href="#portfolio" class="filter-link">Tooling</a>
+          </div>
+        </noscript>
       </div>
       <div class="portfolio-search">
         <input type="search" id="project-search" placeholder="Search projects..." aria-label="Search projects" />
+        <button id="project-search-btn" class="project-search-btn" type="button" aria-label="Search projects">Search</button>
       </div>
     </div>
 
     <div class="projects-grid" id="projects-grid" aria-live="polite">
       <p class="muted">Loading projects…</p>
     </div>
+    <noscript>
+      <div class="no-js">This site requires JavaScript to load project listings. Please enable JavaScript in your browser.</div>
+    </noscript>
   </section>
 
   <div id="project-modal" class="project-modal" aria-hidden="true">
@@ -74,11 +93,11 @@
       const fallback = document.querySelector('.profile-avatar');
       const tester = new Image();
       tester.onload = function () {
-        imgEl.style.display = 'block';
+        imgEl.classList.add('loaded');
         fallback.style.display = 'none';
       };
       tester.onerror = function () {
-        imgEl.style.display = 'none';
+        imgEl.classList.remove('loaded');
         fallback.style.display = 'flex';
       };
       tester.src = imgPath;
@@ -163,7 +182,10 @@
             <p class="project-category">${p.category}</p>
             <p class="project-desc">${p.description}</p>
             <div class="project-tags">
-              ${(p.tags || []).map(t => `<span class="tag">${t}</span>`).join('')}
+              ${(p.tags || []).map(t => {
+                const cls = t.replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+                return `<span class="tag tag-${cls}">${t}</span>`;
+              }).join('')}
             </div>
             <div class="project-actions">
               <button class="btn-details" data-id="${p.id}">Details</button>
@@ -205,9 +227,21 @@
 
           grid.innerHTML = filtered.map(p => createCard(p).outerHTML).join('');
           attachCardEvents();
+          animateCards();
+        }
+
+        function animateCards() {
+          const cards = grid.querySelectorAll('.project-card');
+          cards.forEach((el, i) => {
+            el.style.setProperty('--delay', `${i * 60}ms`);
+      
+            requestAnimationFrame(() => el.classList.add('animate-in'));
+          });
         }
 
         applyFilters();
+        
+        document.querySelector('.hero')?.classList.add('show');
         filtersWrap.addEventListener('click', e => {
           if (e.target.classList.contains('filter')) {
             filtersWrap.querySelectorAll('.filter').forEach(b => b.setAttribute('aria-pressed', 'false'));
@@ -240,20 +274,69 @@
         const img = document.getElementById('modal-image');
         if (p.image) {
           img.src = p.image;
+          img.alt = p.title || '';
           img.style.display = 'block';
-        } else img.style.display = 'none';
+        } else {
+          img.src = '';
+          img.alt = '';
+          img.style.display = 'none';
+        }
 
-        document.getElementById('modal-desc').textContent = p.description;
+        document.getElementById('modal-desc').textContent = p.description || '';
         const link = document.getElementById('modal-link');
         if (p.link) {
           link.href = p.link;
           link.style.display = 'inline-block';
-        } else link.style.display = 'none';
+        } else {
+          link.href = '#';
+          link.style.display = 'none';
+        }
 
         modal.setAttribute('aria-hidden', 'false');
         modal.classList.add('open');
         document.body.style.overflow = 'hidden';
+
+        const closeBtn = modal.querySelector('.modal-close');
+        if (closeBtn) closeBtn.focus();
       }
+
+      function closeModal() {
+        const modal = document.getElementById('project-modal');
+        if (!modal || !modal.classList.contains('open')) return;
+        modal.setAttribute('aria-hidden', 'true');
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+        if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+      }
+
+      document.addEventListener('click', function (e) {
+        const modal = document.getElementById('project-modal');
+        if (!modal) return;
+        if (e.target.classList.contains('modal-close')) closeModal();
+        if (e.target === modal) closeModal();
+      });
+
+      function trapFocusInModal(e) {
+        const modal = document.getElementById('project-modal');
+        if (!modal || !modal.classList.contains('open')) return;
+        if (e.key !== 'Tab') return;
+        const focusable = modal.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeModal();
+        trapFocusInModal(e);
+      });
 
       function debounce(fn, ms) {
         let t;
